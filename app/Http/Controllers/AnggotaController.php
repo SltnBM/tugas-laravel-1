@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AnggotaController extends Controller
 {
@@ -12,6 +13,8 @@ class AnggotaController extends Controller
     public function index()
     {
         //
+        $anggotas = DB::table('anggotas')->get();
+        return view('anggota.index', compact('anggotas'));
     }
 
     /**
@@ -19,7 +22,7 @@ class AnggotaController extends Controller
      */
     public function create()
     {
-        return view('template.perpus.anggota');
+        return view('anggota.create');
     }
 
     /**
@@ -27,7 +30,26 @@ class AnggotaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validasi
+        $request->validate([
+            'kode_anggota'  => 'required|max:9',
+            'nama_anggota'   => 'required|max:100',
+            'jk_anggota'   => 'required',
+            'jurusan_anggota'   => 'required|max:5',
+            'no_telp_anggota'   => 'required|max:13',
+            'alamat_anggota'   => 'required|max:100',
+        ]);
+        // simpan data ke tabel casts
+        $query = DB::table('anggotas')->insert([
+            'kode_anggota'  => $request['kode_anggota'],
+            'nama_anggota'  => $request['nama_anggota'],
+            'jk_anggota'   => $request['jk_anggota'],
+            'jurusan_anggota'   => $request['jurusan_anggota'],
+            'no_telp_anggota'   => $request['no_telp_anggota'],
+            'alamat_anggota'   => $request['alamat_anggota'],
+        ]);
+        // kalo udh kesimpan di redirect ke list data/index
+        return redirect()->route('anggota.index');
     }
 
     /**
@@ -36,6 +58,8 @@ class AnggotaController extends Controller
     public function show(string $id)
     {
         //
+        $anggota = DB::table('anggotas')->where('id', $id)->get();
+        return view('anggota.show', compact('anggota'));
     }
 
     /**
@@ -44,6 +68,8 @@ class AnggotaController extends Controller
     public function edit(string $id)
     {
         //
+        $anggota = DB::table('anggotas')->where('id', $id)->get();
+        return view('anggota.edit', compact('anggota'));
     }
 
     /**
@@ -52,6 +78,25 @@ class AnggotaController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $request->validate([
+            'kode_anggota'  => 'required|max:9',
+            'nama_anggota'   => 'required|max:100',
+            'jk_anggota'   => 'required',
+            'jurusan_anggota'   => 'required|max:5',
+            'no_telp_anggota'   => 'required|max:13',
+            'alamat_anggota'   => 'required|max:100',
+        ]);
+        // simpan data ke tabel casts
+        $query = DB::table('anggotas')->where('id', $id)->update([
+            'kode_anggota'  => $request['kode_anggota'],
+            'nama_anggota'  => $request['nama_anggota'],
+            'jk_anggota'   => $request['jk_anggota'],
+            'jurusan_anggota'   => $request['jurusan_anggota'],
+            'no_telp_anggota'   => $request['no_telp_anggota'],
+            'alamat_anggota'   => $request['alamat_anggota'],
+        ]);
+        // kalo udh kesimpan di redirect ke list data/index
+        return redirect()->route('anggota.index');
     }
 
     /**
@@ -60,5 +105,7 @@ class AnggotaController extends Controller
     public function destroy(string $id)
     {
         //
+        $query = DB::table('anggotas')->where('id', $id)->delete();
+        return redirect()->route('anggota.index');
     }
 }
